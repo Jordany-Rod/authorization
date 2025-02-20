@@ -1,13 +1,21 @@
 from datetime import datetime
+from lib2to3.fixes.fix_input import context
+
 from django.urls import reverse_lazy
 
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from .models import Post
+from unicodedata import category
+
+from .models import Post, Category
 from .filters import PostFilter
 from .forms import PostForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 # импортирую PermissionRequiredMixin для предоставления прав доступа
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.auth.decorators import login_required
+
+from django.shortcuts import render
+from django.shortcuts import get_object_or_404
 
 
 class PostList(ListView):
@@ -83,3 +91,29 @@ class PostDeleteArticles(LoginRequiredMixin, DeleteView):
 
 class MyView(PermissionRequiredMixin, CreateView, UpdateView):
     permission_required = ('news.add_post', 'news.change_post')
+
+class CategoryListView(PostList):
+    model = Post
+    template_name = 'news/category_list.html'
+    context_object_name = 'category_news_list'
+
+    def get_queryset(self):
+        self.category = get_object_or_404(Category, id=self.kwargs['pk'])
+        queryset = Post.objects.filter(category=self.category).order_by('-crated_at')
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['is_not_subscriber'] = self.request.user not in self.category.subscribers.all()
+        context['category'] = self.category
+        return context
+
+@login_required
+def subscribe(request, pk):
+    user = request.user
+    category = Category.objects.get(id=pk)
+    category.subscribers.add(user)
+
+    massage = 'Вы успешно подписались на рассылку новостей категорий'
+    return render(request, 'news/subscribe.html', {'category': category, 'massage': massage})
+

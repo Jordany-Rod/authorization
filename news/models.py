@@ -31,6 +31,9 @@ class Author(models.Model):
 class Category(models.Model):
     title_category = models.CharField(max_length=3, unique=True, choices=POSIT_CAT)
 
+    # Связываем категорию с моделью User
+    subscribers = models.ManyToManyField(User, blank=True, null=True, related_name='categories')
+
     def __str__(self):
         return self.title_category.title()
 
