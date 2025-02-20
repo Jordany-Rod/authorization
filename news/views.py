@@ -98,8 +98,9 @@ class CategoryListView(PostList):
     context_object_name = 'category_news_list'
 
     def get_queryset(self):
+        queryset = super().get_queryset()
         self.category = get_object_or_404(Category, id=self.kwargs['pk'])
-        queryset = Post.objects.filter(category=self.category).order_by('-crated_at')
+        queryset = queryset.filter(category=self.category).order_by('-time_in')
         return queryset
 
     def get_context_data(self, **kwargs):

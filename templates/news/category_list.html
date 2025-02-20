@@ -10,7 +10,7 @@ Posts
 {% block content %}
    <h1>Все новости</h1>
     {% if is_not_subscriber %}
-        <p class="text-center"><a href="{% url 'subscribe' category, id %}" class="btn btn-secondary btn-sm">Подписаться</a></p>
+        <p class="text-center"><a href="{% url 'subscribe' category.id %}" class="btn btn-secondary btn-sm">Подписаться</a></p>
     {% endif %}
     <form action="" method="get">
         {{ filterset.form.as_p }}
