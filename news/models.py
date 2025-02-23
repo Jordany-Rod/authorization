@@ -35,7 +35,8 @@ class Category(models.Model):
     subscribers = models.ManyToManyField(User, blank=True, null=True, related_name='categories')
 
     def __str__(self):
-        return self.title_category.title()
+        # return self.title_category.title()
+        return self.get_title_category_display()
 
 class Post(models.Model):
     art_new = models.CharField(max_length = 3, choices=POSITIONS, default=news)
