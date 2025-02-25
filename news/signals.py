@@ -2,6 +2,9 @@ from django.db.models.signals import m2m_changed
 from django.dispatch import receiver
 from django.template.loader import render_to_string
 
+from django.conf import settings
+from django.core.mail import EmailMultiAlternatives
+
 from news.models import PostCategory
 
 
@@ -12,7 +15,7 @@ def send_notifications(preview, pk, title, subscribers):
         'post_created_email.html',
         {
             'text': preview,
-            'link': f'{settings.SITE_URL}/news/{pk}'
+            'link': f'{settings.SITE_URL}/post/{pk}'
         }
     )
 
