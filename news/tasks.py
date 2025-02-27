@@ -8,8 +8,8 @@ import datetime
 @shared_task
 def send_email_task(pk):
     post = Post.objects.get(pk=pk)
-    categories = post.post_category.all()
-    title = post.post_title
+    categories = post.category.all()
+    title = post.title
     subscribers_emails = []
     for category in categories:
         subscribers_users = category.subscribers.all()
@@ -18,7 +18,7 @@ def send_email_task(pk):
     html_content = render_to_string(
         'post_created_email.html',
         {
-            'text': f'{post.post_title}',
+            'text': f'{post.title}',
             'link': f'{settings.SITE_URL}/news/{pk}',
         }
     )
